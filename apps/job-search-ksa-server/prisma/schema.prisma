@@ -1,0 +1,79 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Company {
+  companyName    String?
+  companySize    Int?
+  createdAt      DateTime  @default(now())
+  id             String    @id @default(cuid())
+  industry       String?
+  jobs           Job[]
+  location       Location? @relation(fields: [locationId], references: [id])
+  locationId     String?
+  officeLocation String?
+  updatedAt      DateTime  @updatedAt
+}
+
+model Application {
+  applicationDate   DateTime?
+  applicationStatus EnumApplicationApplicationStatus?
+  candidate         Candidate?                        @relation(fields: [candidateId], references: [id])
+  candidateId       String?
+  createdAt         DateTime                          @default(now())
+  id                String                            @id @default(cuid())
+  job               Job?                              @relation(fields: [jobId], references: [id])
+  jobId             String?
+  updatedAt         DateTime                          @updatedAt
+}
+
+model Candidate {
+  applications  Application[]
+  candidateName String?
+  createdAt     DateTime              @default(now())
+  email         String?
+  id            String                @id @default(cuid())
+  phoneNumber   Int?
+  skills        EnumCandidateSkills[]
+  updatedAt     DateTime              @updatedAt
+}
+
+model Job {
+  applications   Application[]
+  company        Company?        @relation(fields: [companyId], references: [id])
+  companyId      String?
+  createdAt      DateTime        @default(now())
+  id             String          @id @default(cuid())
+  jobDescription String?
+  jobTitle       String?
+  jobType        EnumJobJobType?
+  salary         Float?
+  updatedAt      DateTime        @updatedAt
+}
+
+model Location {
+  city      String?
+  companies Company[]
+  country   String?
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  state     String?
+  updatedAt DateTime  @updatedAt
+}
+
+enum EnumApplicationApplicationStatus {
+  Option1
+}
+
+enum EnumCandidateSkills {
+  Option1
+}
+
+enum EnumJobJobType {
+  Option1
+}
